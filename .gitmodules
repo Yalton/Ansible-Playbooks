@@ -1,0 +1,3 @@
+[submodule "scripts"]
+	path = scripts
+	url = git@repo.billbert.co:yalt/Scripts.git

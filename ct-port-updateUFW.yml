@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+    - name: Run Bash Script
+      become: true
+      script: scripts/ufwDockerAllow/ctUfwAllow.sh
+    
+    - name: Allow Common UFW ports
+      become: true
+      shell:  |
+        ufw allow 80 
+        ufw allow 443 
+        ufw allow ssh 
+        ufw allow 80 
+    
+    - name: Enable UFW
+      become: true
+      shell:  |
+        ufw enable
+    
