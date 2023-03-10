@@ -1,0 +1,57 @@
+---
+- name: Check if python is already installed 
+  stat: 
+    path "/usr/local/bin/python{{ agent_python_vesion.split('.')[0] }}.{{ agent_python_version.split('.')[1] }}"
+  register: python 
+
+- name: Install python 
+  block 
+    - name: Ensure dependencies are installed
+      become: true
+      apt: 
+        name: 
+          - wget 
+        state: present 
+  - name: Create temp directory 
+    file: 
+      name: "{{ agent_python_temp_location }}"
+      state: directory 
+    
+  - name: Get python source 
+    get_url: 
+      url: "https://www.python.org/ftp/python/{{ agent_python_version }}/Python-{{ agent_python_version }}.tgz"
+      dest: "{{ agent_python_temp_location }}"
+  
+  - name: Configure Python 
+    shell: ./configure --enable-optimizations 
+    args:
+      chdir: "{{ agent_python_temp_location }}/Python-{{ agent_python_version }}"
+  
+  - name: Compile and Install Python
+    become: true 
+    shell: make altinstall
+    args: 
+      chdir: "{{ agent_python_temp_location }}/Python-{{ agent_python_version }}"
+  
+  - name: Delete temp directory 
+    become: true 
+    file: 
+      name: "{{ agent_python_temp_location }}"
+      state: absent
+  when: 
+    - not python.stat.exists
+    # - agent_python_version.split('.')[0]|int == 3
+
+- name: Create virtual environment and install packages 
+  pip: 
+    name: "pip"
+    state: forcereinstall 
+    virtualenv: "/home/{{ agent_user }}/.python{{ agent_python_version }}-virtualenv"
+    virtualenv_command: "/usr/local/bin/python{{ agent_python_version.split('.')[0] }}.{{{ agent_python_version.split('.')[1] }} -m venv --system-site-packages"
+  become: true 
+  become_user: "{{ agent_user }}"
+
+# - name: Setup environment variables 
+#   become: true
+#   copy: 
+#     content: | 

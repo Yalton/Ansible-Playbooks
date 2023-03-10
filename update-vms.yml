@@ -1,0 +1,32 @@
+---
+- hosts: vms
+  tasks:
+  - name: Update all installed packages using APT module
+    become: yes
+    apt:
+      name: '*'
+      state: latest
+      update_cache: yes
+      only_upgrade: yes
+    register: apt_update_status
+
+  - name: Remove packages not needed anymore
+    become: yes
+    apt:
+      autoremove: yes
+  
+#- hosts: vms
+#  tasks:
+#  - name: Update all installed packages using APT module
+#    become: yes
+#    apt:
+#      name: '*'
+#      state: latest
+#      update_cache: yes
+#      only_upgrade: yes
+#    register: apt_update_status
+#
+#  - name: Remove packages not needed anymore
+#    become: yes
+#    apt:
+#      autoremove: yes
