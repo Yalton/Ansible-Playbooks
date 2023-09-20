@@ -5,13 +5,11 @@
   tasks:
     - name: Copy setup_zsh.sh to the target
       copy:
-        src: scripts/setup_zsh/setup_zsh.sh  # Replace with the actual path to the script on your machine
+        src: scripts/setup_zsh/setup_zsh.sh
         dest: /home/yalt/setup_zsh.sh
         owner: yalt
         group: yalt
         mode: '0755'
 
-    - name: Run the script as user yalt
-      become: yes
-      become_user: yalt
-      command: /home/yalt/setup_zsh.sh
+    - name: Run the script as user yalt using sudo
+      command: sudo -u yalt /home/yalt/setup_zsh.sh
