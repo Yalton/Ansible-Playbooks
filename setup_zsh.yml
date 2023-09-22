@@ -13,3 +13,9 @@
 
     - name: Run the script as user yalt using sudo
       command: sudo -u yalt /home/yalt/setup_zsh.sh
+      register: script_output
+      ignore_errors: yes
+
+    - name: Display script output
+      debug:
+        var: script_output.stdout_lines
